@@ -1,147 +1,477 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
 
-int main() {
-    menu();
-    return 0;
+char jogador_char = '&';
+char chave_char = '@';
+char guarda_char = 'X';
+char guarda2_char = 'V';
+char porta_fecha = 'D';
+char porta_aber = '=';
+char arame_char = '#';
+char botao_char = 'O';
+char ventilacao_char = '>';
+
+char tecla_pressionada;
+int jogadorX = 1, jogadorY = 1;
+int guardaX, guardaY;
+int guarda2X, guarda2Y;
+int tem_chave;
+int chaveX, chaveY;
+int tela = 0;
+int coord_X, coord_Y;
+int vidas;
+int botao_pressionado;
+
+
+void movimento_jogador(char tecla_pressionada, int limite)
+{
+    if (tecla_pressionada == 'q')
+    {
+        tela = 0;
+        main();
+    }
+    if (tecla_pressionada == 'w' && jogadorX - 1 != 0 && jogadorX - 1 != limite)
+    {
+        jogadorX--;
+    }
+    if (tecla_pressionada == 's' && jogadorX + 1 != 0 && jogadorX + 1 != limite)
+    {
+        jogadorX++;
+    }
+    if (tecla_pressionada == 'a' && jogadorY - 1 != 0 && jogadorY - 1 != limite)
+    {
+        jogadorY--;
+    }
+    if (tecla_pressionada == 'd' && jogadorY + 1 != 0 && jogadorY + 1 != limite)
+    {
+        jogadorY++;
+    }
 }
-
-void menu() {
-    int escolha;
-    do {
-        printf("\n=== Arcade de Minijogos ===\n");
-        printf("1. Pergunta e Resposta\n");
-        printf("2. Cobra na Caixa!\n");
-        printf("3. Gousmas War\n");
-        printf("4. Sair\n");
-        printf("Escolha um jogo: ");
-        scanf("%d", &escolha);
-        
-        switch (escolha) {
-            case 1:
-                perguntaEResposta();
-                break;
-            case 2:
-                cobraNaCaixa();
-                break;
-            case 3:
-                gousmasWar();
-                break;
-            case 4:
-                printf("Saindo do arcade...\n");
-                break;
-            default:
-                printf("Opção inválida!\n");
-        }
-    } while (escolha != 4);
-}
-
-void perguntaEResposta() {
-    char *perguntas[5] = {
-        "O que um ornitorrinco tem em comum com um réptil?\n1) Ele tem escamas\n2) Ele muda de pele\n3) Ele bota ovos\n4) Ele não tem pulmões", //pergunta criada pelo chatGPT
-        "Qual desses filmes NÃO é da Pixar?\n1)  Toy Story\n2) Shrek\n3) Procurando Nemo\n4)  Os Incríveis", //pergunta criada pelo chatGPT
-        "Qual dessas frutas flutua na água?\n1)Banana\n2) Melancia\n3) Uva\n4) Abacate", //pergunta criada pelo chatGPT
-        "O que acontece se você gritar no espaço?\n1) O som se espalha normalmente\n2) O som fica mais alto\n3) Nada, porque o som não se propaga no vácuo\n4) Você perde a voz imediatamente", //pergunta criada pelo chatGPT
-        "Se um pinguim usasse sapatos, qual seria o tamanho do pé dele?\n1) 38\n2) 42\n3) Nenhum, pinguins não precisam de sapatos\n4) 45" //pergunta criada pelo chatGPT
-    };
-    int respostas[5] = {3, 2, 2, 3, 3};
-    int resposta, acertos = 0;
-    
-    for (int i = 0; i < 5; i++) {
-        printf("\n%s\nResposta: ", perguntas[i]);
-        scanf("%d", &resposta);
-        if (resposta == respostas[i]) {
-            printf("Correto!\n");
-            acertos++;
-        } else {
-            printf("Incorreto! A resposta certa era %d.\n", respostas[i]);
+void paredes(int limiteX, int limiteY, char nivel[limiteX][limiteY])
+{
+    for (int x = 0; x < limiteX; x++)
+    {
+        for (int y = 0; y < limiteY; y++)
+        {
+            if (x == 0 || x == limiteX - 1 || y == 0 || y == limiteY - 1)
+            {
+                nivel[x][y] = '*';
+            }
+            else
+            {
+                nivel[x][y] = ' ';
+            }
         }
     }
-    printf("Você acertou %d de 5 perguntas!\n", acertos);
+}
+void printar_nivel(int limiteX, int limiteY, char nivel[limiteX][limiteY])
+{
+    for (coord_X = 0; coord_X < limiteX; coord_X++)
+    {
+        for (coord_Y = 0; coord_Y < limiteY; coord_Y++)
+        {
+            printf(" %c", nivel[coord_X][coord_Y]);
+        }
+        printf("\n");
+    }
+}
+void gameover(char nivel[20][20]) 
+{
+    if (nivel[jogadorX][jogadorY] == arame_char || jogadorX == guardaX && jogadorY == guardaY) {
+        system("cls");
+        jogadorY = 1;
+        jogadorX = 1;
+        tem_chave = 0;
+        vidas--;
+
+        if (vidas == 0) {
+            printf(
+                "Voce foi pego 3 vezes tentando fugir e foi jogado na solitaria\n"
+                "Talvez em outro momento voce consiga fugir...\n"
+                "\n"
+            );
+            system("pause");
+            tela = 0;
+            main();
+        }
+        printf("Voce foi pego! Tentativas restantes: (%d)\n\n", vidas);
+
+        system("pause");
+    }
 }
 
-void cobraNaCaixa() {
+void gameover2(char nivel[40][40])
+{
+	if (nivel[jogadorX][jogadorY] == arame_char || jogadorX == guardaX && jogadorY == guardaY) {
+        system("cls");
+        jogadorY = 1;
+        jogadorX = 1;
+        tem_chave = 0;
+        vidas--;
+
+        if (vidas == 0) {
+            printf(
+                "Voce foi pego 3 vezes tentando fugir e foi jogado na solitaria\n"
+                "Talvez em outro momento voce consiga fugir...\n"
+                "\n"
+            );
+            system("pause");
+            tela = 0;
+            main();
+        }
+        printf("Voce foi pego! Tentativas restantes: (%d)\n\n", vidas);
+
+        system("pause");
+    }
+}
+
+int main()
+{
+    vidas = 3;
     srand(time(NULL));
-    int botao, cobra, escolha, jogador = 0;
-    char jogadores[2][50];
-    
-    printf("Digite o nome do Jogador 1: ");
-    scanf("%s", jogadores[0]);
-    printf("Digite o nome do Jogador 2: ");
-    scanf("%s", jogadores[1]);
-    
-    do {
-        botao = rand() % 5 + 1;
-        cobra = rand() % 5 + 1;
-    } while (botao == cobra);
-    
-    while (1) {
-        printf("\n%s, escolha uma caixa (1 a 5): ", jogadores[jogador]);
-        scanf("%d", &escolha);
-        if (escolha == botao) {
-            printf("%s encontrou o botão e venceu!\n", jogadores[jogador]);
-            break;
-        } else if (escolha == cobra) {
-            printf("%s encontrou a cobra e perdeu!\n", jogadores[jogador]);
-            break;
-        } else {
-            printf("A caixa estava vazia. Próximo jogador!\n");
-            jogador = 1 - jogador;
-        }
-    }
-}
 
-void gousmasWar() {
-    int gousmas[2][2] = {{1, 1}, {1, 1}};
-    int turno = 0, escolha, ataque, origem;
-    char jogadores[2][50];
+    int opcao;
+
+    int guard_move;
+
+    char nivel1[10][10];
+
+    char nivel2[20][20];
     
-    printf("Digite o nome do Jogador 1: ");
-    scanf("%s", jogadores[0]);
-    printf("Digite o nome do Jogador 2: ");
-    scanf("%s", jogadores[1]);
+    char nivel3[40][40];
     
-    while (gousmas[0][0] + gousmas[0][1] > 0 && gousmas[1][0] + gousmas[1][1] > 0) {
-        printf("\nTurno de %s\n", jogadores[turno]);
-        printf("Suas Gousmas: Esquerda (%d), Direita (%d)\n", gousmas[turno][0], gousmas[turno][1]);
-        printf("1. Atacar\n2. Dividir Gousma\nEscolha: ");
-        scanf("%d", &escolha);
-        
-        if (escolha == 1) {
-            printf("Escolha com qual Gousma atacar (1-Esquerda, 2-Direita): ");
-            scanf("%d", &origem);
-            if (gousmas[turno][origem - 1] > 0) {
-                printf("Escolha qual Gousma inimiga atacar (1-Esquerda, 2-Direita): ");
-                scanf("%d", &ataque);
-                gousmas[1 - turno][ataque - 1] += gousmas[turno][origem - 1];
-                gousmas[turno][origem - 1] = 0;
-            } else {
-                printf("Essa Gousma não pode atacar pois está zerada!\n");
-            }
-        } else if (escolha == 2) {
-            printf("Escolha qual Gousma dividir (1-Esquerda, 2-Direita): ");
-            scanf("%d", &origem);
-            if (gousmas[turno][origem - 1] > 1) {
-                int metade = gousmas[turno][origem - 1] / 2;
-                gousmas[turno][origem - 1] -= metade;
-                gousmas[turno][1 - (origem - 1)] += metade;
-            } else {
-                printf("Essa Gousma não pode ser dividida!\n");
-            }
+    paredes(10, 10, nivel1);
+    paredes(20, 20, nivel2);
+    paredes(40, 40, nivel3);
+
+    while (tela == 0)
+    {
+        system("cls");
+        printf("||||BRAZIL DUNGEON||||\n\n");
+	    printf("   1- Jogar\n\n\n   2- Tutorial\n\n\n   3- Sair\n\n\n");
+        opcao = getch();
+
+        if (opcao == '1')
+        {
+            system("cls");
+
+            printf("Ze do crime foi jogado no presidio de Carandiru para pagar pelo o que fez\n");
+            sleep(1);
+            printf("Em uma madrugada silenciosa, o Ze do crime tentou escapar de carandiru\n\n\n");
+
+            system("pause");
+            tela = 1;
+            system("cls");
         }
-        
-        for (int i = 0; i < 2; i++) {
-            if (gousmas[0][i] > 5) gousmas[0][i] = 0;
-            if (gousmas[1][i] > 5) gousmas[1][i] = 0;
+        else if (opcao == '2')
+        {
+            system("cls");
+            printf(
+                "Passe por tres setores do presidio coletando 3 chaves e evitando os guardas para conseguir sua liberdade.\n\n"
+                "Em cada nivel, voce precisa se mover para coletar uma chave e abrir uma porta fechada.\n\n"
+                "Para completar sua fuga, veja esses comandos e elementos do cenario:\n\n\n"
+                "W: Mova uma unidade para cima\n\n"
+                "A: Mova uma unidade para esquerda\n\n"
+                "S: Mova uma unidade para baixo\n\n"
+                "D: Mova uma unidade para direita\n\n"
+                "I: Interage com um objeto\n\n"
+				"@: Chave da porta\n\n"
+				"X: Guarda nivel 1\n\n"
+				"V: Guarda nivel 2\n\n"
+				"&: Ze do crime\n\n"
+				"#: Arame farpado\n\n"
+				">: Tubo de ventilacao\n\n"
+				"O: Botao\n\n"
+				"D: Porta fechada\n\n"
+				"=: Porta aberta\n\n");
+            system("pause");
         }
-        
-        if (gousmas[turno][0] + gousmas[turno][1] == 0) {
-            printf("%s perdeu todas as Gousmas! %s venceu!\n", jogadores[turno], jogadores[1 - turno]);
-            break;
+        else if (opcao == '3')
+        {
+            system("cls");
+            printf("Voce nao tem a coragem necessaria para fugir ne?");
+            return 0;
         }
-        
-        turno = 1 - turno;
+        else
+        {
+            printf("Coloque uma opcao valida!\n");
+            system("pause");
+        }
     }
+
+    
+    while (tela == 1)
+    {
+        guardaX = 6;
+        guardaY = 6;
+        chaveX = 5;
+        chaveY = 5;
+
+        guard_move = rand() % 4;
+        if (guard_move == 0 && guardaX - 1 != 0 && guardaX - 1 != 9)
+        {
+            guardaX--;
+        }
+        if (guard_move == 1 && guardaX + 1 != 0 && guardaX + 1 != 9)
+        {
+            guardaX++;
+        }
+        if (guard_move == 2 && guardaY - 1 != 0 && guardaY - 1 != 9)
+        {
+            guardaY--;
+        }
+        if (guard_move == 3 && guardaY + 1 != 0 && guardaY + 1 != 9)
+        {
+            guardaY++;
+        }
+
+        nivel1[guardaX][guardaY] = guarda_char;
+        if (tem_chave == 0)
+        {
+            nivel1[9][5] = porta_fecha;
+            nivel1[chaveX][chaveY] = chave_char;
+        }
+        if (tem_chave == 1)
+        {
+            nivel1[9][5] = porta_aber;
+            nivel1[chaveX][chaveY] = ' ';
+        }
+
+        nivel1[jogadorX][jogadorY] = jogador_char;
+        printar_nivel(10, 10, nivel1);
+
+        nivel1[jogadorX][jogadorY] = ' ';
+        nivel1[guardaX][guardaY] = ' ';
+
+        tecla_pressionada = getch();
+        movimento_jogador(tecla_pressionada, 9);
+
+        if (jogadorX == chaveX && jogadorY == chaveY && tecla_pressionada == 'i')
+        {
+            tem_chave = 1;
+        }
+
+        gameover(nivel1);
+
+        
+        if (jogadorX == 8 && jogadorY == 5 && tem_chave == 1 && tecla_pressionada == 's')
+        {
+            tela = 2;
+            system("cls");
+            printf(
+                "Ze do crime conseguiu sair de dentro de sua cela\n"
+                "Agora ele tem que sair do patio de carandiru\n"
+                "Porem vai precisar liberar a chave que esta cheia de arame farpado\n"
+                "\n"
+                "\n"
+            );
+            system("pause");
+            jogadorX = 1, jogadorY = 1;
+            tem_chave = 0;
+        }
+        system("cls");
+    }
+		jogadorX = 1;
+		jogadorY = 1;
+        guarda2X = 10;
+        guarda2Y = 17;
+        botao_pressionado = 0;
+        tem_chave = 0;
+        chaveX = 2;
+        chaveY = 8;
+        
+    
+    while (tela == 2)
+    {   
+        
+        if (botao_pressionado == 0)
+        {
+            nivel2[chaveX-1][chaveY] = arame_char;
+            nivel2[chaveX+1][chaveY] = arame_char;
+            nivel2[chaveX][chaveY-1] = arame_char;
+            nivel2[chaveX][chaveY+1] = arame_char;
+            nivel2[12][12] = botao_char;
+        }
+        else
+        {
+            nivel2[chaveX-1][chaveY] = ' ';
+            nivel2[chaveX+1][chaveY] = ' ';
+            nivel2[chaveX][chaveY-1] = ' ';
+            nivel2[chaveX][chaveY+1] = ' ';
+        }
+        if (tem_chave == 0)
+        {
+            nivel2[19][5] = porta_fecha;
+            nivel2[chaveX][chaveY] = chave_char;
+        }
+        else
+        {
+            nivel2[19][5] = porta_aber;
+        }
+
+
+        guard_move = rand() % 2;    
+        if (guard_move == 0) 
+        {
+            if (jogadorY < guardaY && guardaY - 1 != 0) {
+                guardaY--;
+            } else if (jogadorY > guardaY && guardaY + 1 != 19) {
+                guardaY++;
+            }
+        } 
+        else 
+        {
+            if (jogadorX < guardaX && guardaX - 1 != 0) {
+                guardaX--;
+            } else if (jogadorX > guardaX && guardaX + 1 != 19) {
+                guardaX++;
+            }
+        }
+
+        
+        nivel2[jogadorX][jogadorY] = jogador_char;
+        nivel2[guardaX][guardaY] = guarda2_char;
+
+        printar_nivel(20, 20, nivel2);
+
+        if (jogadorX == 12 && jogadorY == 12)
+        {
+            botao_pressionado = 1;
+        }
+
+        nivel2[jogadorX][jogadorY] = ' ';
+        nivel2[guardaX][guardaY] = ' ';
+        tecla_pressionada = getch();
+
+        if (jogadorX == chaveX && jogadorY == chaveY && tecla_pressionada == 'i')
+        {
+            tem_chave = 1;
+            nivel2[19][5] = porta_aber;
+        }
+        if (jogadorX == 18 && jogadorY == 5 && tem_chave == 1 && tecla_pressionada == 's'){
+            system("cls");
+            tela = 3;
+            printf("Boa, Ze do crime ja esta vendo a luz da liberdade...\n");
+            printf("Use as ventilacoes marcadas como '>' para driblar o guarda\n\n\n");
+            system("pause");
+        }
+        movimento_jogador(tecla_pressionada, 19);
+        gameover(nivel2);
+        system("cls");
+
+    }
+    
+	jogadorX = 1;
+	jogadorY = 1;
+	guarda2X = 10;
+    guarda2Y = 17;
+    botao_pressionado = 0;
+    tem_chave = 0;
+    chaveX = 22;
+    chaveY = 28;
+        
+	while(tela == 3)
+	{
+		
+        
+        if (botao_pressionado == 0)
+        {
+            nivel3[chaveX-1][chaveY] = arame_char;
+            nivel3[chaveX+1][chaveY] = arame_char;
+            nivel3[chaveX][chaveY-1] = arame_char;
+            nivel3[chaveX][chaveY+1] = arame_char;
+            nivel3[32][17] = botao_char;
+        }
+        else
+        {
+            nivel3[chaveX-1][chaveY] = ' ';
+            nivel3[chaveX+1][chaveY] = ' ';
+            nivel3[chaveX][chaveY-1] = ' ';
+            nivel3[chaveX][chaveY+1] = ' ';
+        }
+        if (tem_chave == 0)
+        {
+            nivel3[39][20] = porta_fecha;
+            nivel3[chaveX][chaveY] = chave_char;
+        }
+        else
+        {
+            nivel3[39][20] = porta_aber;
+        }
+
+
+        guard_move = rand() % 2;    
+        if (guard_move == 0) 
+        {
+            if (jogadorY < guardaY && guardaY - 1 != 0) {
+                guardaY--;
+            } else if (jogadorY > guardaY && guardaY + 1 != 39) {
+                guardaY++;
+            }
+        } 
+        else 
+        {
+            if (jogadorX < guardaX && guardaX - 1 != 0) {
+                guardaX--;
+            } else if (jogadorX > guardaX && guardaX + 1 != 39) {
+                guardaX++;
+            }
+        }
+
+        
+        nivel3[jogadorX][jogadorY] = jogador_char;
+        nivel3[guardaX][guardaY] = guarda2_char;
+
+        printar_nivel(40, 40, nivel3);
+
+        if (jogadorX == 32 && jogadorY == 17)
+        {
+            botao_pressionado = 1;
+        }
+		
+		nivel3[5][22] = ventilacao_char;
+		nivel3[29][25] = ventilacao_char;
+		
+		if(jogadorX == 5 && jogadorY == 22)
+		{
+			jogadorX = 29;
+			jogadorY = 25;
+		}
+		else if(jogadorX == 29 && jogadorY == 25)
+		{
+			jogadorX = 5;
+			jogadorY = 22;
+		}
+		
+        nivel3[jogadorX][jogadorY] = ' ';
+        nivel3[guardaX][guardaY] = ' ';
+        tecla_pressionada = getch();
+
+        if (jogadorX == chaveX && jogadorY == chaveY && tecla_pressionada == 'i')
+        {
+            tem_chave = 1;
+            nivel3[39][20] = porta_aber;
+        }
+        if (jogadorX == 38 && jogadorY == 20 && tem_chave == 1 && tecla_pressionada == 's'){
+            system("cls");
+            tela = 4;
+            printf("O sol nao eh mais quadrado!\n");
+            printf("Voce conquistou sua liberdade (nao) honesta, mas cuidado pra nao vacilar e perder ela de novo...\n\n\n");
+            system("pause");
+        }
+        movimento_jogador(tecla_pressionada, 39);
+        gameover2(nivel3);
+        system("cls");
+
+	}
+	
+	while(tela == 4){
+		printf("Obrigado por jogar\n\nFeito por: Luis Arthur\n\n");
+		tela = 0;
+		system("pause");
+		main();
+	}
+	
+    return 0;
 }

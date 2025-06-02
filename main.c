@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+// declarando as variaveis globais
 char jogador_char = '&';
 char chave_char = '@';
 char guarda_char = 'X';
@@ -23,7 +24,7 @@ int coord_X, coord_Y;
 int vidas;
 int botao_pressionado;
 
-
+// funçao para movimentar o jogador
 void movimento_jogador(char tecla_pressionada, int limite)
 {
     if (tecla_pressionada == 'q')
@@ -48,6 +49,7 @@ void movimento_jogador(char tecla_pressionada, int limite)
         jogadorY++;
     }
 }
+// funçao para criar as paredes do nivel
 void paredes(int limiteX, int limiteY, char nivel[limiteX][limiteY])
 {
     for (int x = 0; x < limiteX; x++)
@@ -65,6 +67,7 @@ void paredes(int limiteX, int limiteY, char nivel[limiteX][limiteY])
         }
     }
 }
+// funçao para imprimir o nivel
 void printar_nivel(int limiteX, int limiteY, char nivel[limiteX][limiteY])
 {
     for (coord_X = 0; coord_X < limiteX; coord_X++)
@@ -76,6 +79,7 @@ void printar_nivel(int limiteX, int limiteY, char nivel[limiteX][limiteY])
         printf("\n");
     }
 }
+// funçao para verificar se o jogador foi pego pelo guarda ou se ele caiu no arame farpado
 void gameover(char nivel[20][20]) 
 {
     if (nivel[jogadorX][jogadorY] == arame_char || jogadorX == guardaX && jogadorY == guardaY) {
@@ -84,7 +88,8 @@ void gameover(char nivel[20][20])
         jogadorX = 1;
         tem_chave = 0;
         vidas--;
-
+        // Se o jogador perder todas as vidas, exibe uma mensagem de game over
+        // e reinicia o jogo
         if (vidas == 0) {
             printf(
                 "Voce foi pego 3 vezes tentando fugir e foi jogado na solitaria\n"
@@ -92,15 +97,17 @@ void gameover(char nivel[20][20])
                 "\n"
             );
             system("pause");
+            
             tela = 0;
             main();
         }
         printf("Voce foi pego! Tentativas restantes: (%d)\n\n", vidas);
 
         system("pause");
+        
     }
 }
-
+// funçao para verificar se o jogador foi pego pelo guarda ou se ele caiu no arame farpado no segundo nivel porem com mensagens diferentes
 void gameover2(char nivel[40][40])
 {
 	if (nivel[jogadorX][jogadorY] == arame_char || jogadorX == guardaX && jogadorY == guardaY) {
@@ -109,9 +116,10 @@ void gameover2(char nivel[40][40])
         jogadorX = 1;
         tem_chave = 0;
         vidas--;
-
+        // Se o jogador perder todas as vidas, exibe uma mensagem de game over
         if (vidas == 0) {
             printf(
+                "Dessa vez foi quase, Ze do crime...\n"
                 "Voce foi pego 3 vezes tentando fugir e foi jogado na solitaria\n"
                 "Talvez em outro momento voce consiga fugir...\n"
                 "\n"
@@ -123,9 +131,10 @@ void gameover2(char nivel[40][40])
         printf("Voce foi pego! Tentativas restantes: (%d)\n\n", vidas);
 
         system("pause");
+        
     }
 }
-
+// funçao principal que inicia o jogo
 int main()
 {
     vidas = 3;
@@ -140,11 +149,16 @@ int main()
     char nivel2[20][20];
     
     char nivel3[40][40];
+    jogadorX = 1;
+    jogadorY = 1;
+    chaveX = 5;
+    chaveY = 5;
+    tem_chave = 0;
     
     paredes(10, 10, nivel1);
     paredes(20, 20, nivel2);
     paredes(40, 40, nivel3);
-
+    // inicializa o menu do jogo
     while (tela == 0)
     {
         system("cls");
@@ -200,14 +214,14 @@ int main()
         }
     }
 
-    
+    // primeiro nivel do jogo
     while (tela == 1)
     {
         guardaX = 6;
         guardaY = 6;
         chaveX = 5;
         chaveY = 5;
-
+        // movimenta o guarda aleatoriamente
         guard_move = rand() % 4;
         if (guard_move == 0 && guardaX - 1 != 0 && guardaX - 1 != 9)
         {
@@ -254,7 +268,7 @@ int main()
 
         gameover(nivel1);
 
-        
+        // se o jogador chegar na porta com a chave, ele avança para o segundo nivel
         if (jogadorX == 8 && jogadorY == 5 && tem_chave == 1 && tecla_pressionada == 's')
         {
             tela = 2;
@@ -281,7 +295,7 @@ int main()
         chaveX = 2;
         chaveY = 8;
         
-    
+    // segundo nivel do jogo 
     while (tela == 2)
     {   
         
@@ -310,7 +324,7 @@ int main()
             nivel2[19][5] = porta_aber;
         }
 
-
+        // movimenta o guarda de acordo com a posiçao do jogador
         guard_move = rand() % 2;    
         if (guard_move == 0) 
         {
@@ -349,6 +363,7 @@ int main()
             tem_chave = 1;
             nivel2[19][5] = porta_aber;
         }
+        // se o jogador chegar na porta com a chave, ele avança para o terceiro nivel
         if (jogadorX == 18 && jogadorY == 5 && tem_chave == 1 && tecla_pressionada == 's'){
             system("cls");
             tela = 3;
@@ -370,7 +385,8 @@ int main()
     tem_chave = 0;
     chaveX = 22;
     chaveY = 28;
-        
+    
+    // terceiro nivel do jogo
 	while(tela == 3)
 	{
 		
@@ -400,7 +416,7 @@ int main()
             nivel3[39][20] = porta_aber;
         }
 
-
+        // movimenta o guarda de acordo com a posiçao do jogador
         guard_move = rand() % 2;    
         if (guard_move == 0) 
         {
@@ -453,6 +469,9 @@ int main()
             tem_chave = 1;
             nivel3[39][20] = porta_aber;
         }
+
+        // se o jogador chegar na porta com a chave, ele avança para a tela de creditos
+        // e finaliza o jogo
         if (jogadorX == 38 && jogadorY == 20 && tem_chave == 1 && tecla_pressionada == 's'){
             system("cls");
             tela = 4;
@@ -465,13 +484,15 @@ int main()
         system("cls");
 
 	}
-	
+	// tela de creditos do jogo
 	while(tela == 4){
 		printf("Obrigado por jogar\n\nFeito por: Luis Arthur\n\n");
+        // retorna ao menu principal
 		tela = 0;
 		system("pause");
 		main();
+        
 	}
-	
+    
     return 0;
 }

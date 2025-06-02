@@ -2,13 +2,13 @@
 
 **Brazil Dungeon** é um jogo de terminal escrito em C onde você controla **Zé do Crime**, um prisioneiro tentando escapar do presídio de Carandiru. Passe por três níveis com desafios crescentes, evitando guardas, coletando chaves e interagindo com o ambiente para alcançar a liberdade.
 
-## 📋 Requisitos
+##  Requisitos
 
 - Compilador C (ex: `gcc`)
 
 ---
 
-## 🧱 Compilação
+##  Compilação
 
 ### Windows (com MinGW)
 

@@ -38,7 +38,7 @@ Nível 3: Use túneis de ventilação (>) para escapar do guarda e alcançar a s
 | `A`   | Mover para a esquerda          |
 | `S`   | Mover para baixo               |
 | `D`   | Mover para a direita           |
-| `I`   | Interagir (pegar chave, botão) |
+| `I`   | Interagir (pegar chave) |
 | `Q`   | Voltar ao menu principal       |
 
 ## 🔠 Legenda dos Elementos

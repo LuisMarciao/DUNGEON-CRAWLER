@@ -5,9 +5,6 @@
 ## 📋 Requisitos
 
 - Compilador C (ex: `gcc`)
-- Sistema compatível com Windows (uso de `system("cls")`, `getch()`, `sleep()` da `windows.h`)
-
-> ❗ Em Linux/macOS, será necessário adaptar algumas funções (limpeza de tela e entrada de teclas).
 
 ---
 
